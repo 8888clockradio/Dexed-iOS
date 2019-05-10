@@ -126,17 +126,6 @@ public :
     StringArray programNames;
     Cartridge currentCart;
     uint8_t data[161];
-
-    /* george */
-    /*void* editor_m;
-    bool editorIsPresent_m;
-    CriticalSection* exitLock_m;
-    void setEditorPresent(bool isPresent, CriticalSection* exitLock)
-    {
-        exitLock_m = exitLock;
-        editorIsPresent_m = isPresent;
-    }*/
-    /* george */
     
     SysexComm sysexComm;
     VoiceStatus voiceStatus;

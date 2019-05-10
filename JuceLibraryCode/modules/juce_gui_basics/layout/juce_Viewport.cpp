@@ -45,7 +45,7 @@ Viewport::Viewport (const String& name)  : Component (name)
     //printf("area.getWidth(): %i area.getHeight(): %i \r\n", area.getWidth(), area.getHeight());
     //contentHolder.setSize(area.getWidth() - scrollBarThickness, area.getHeight() - scrollBarThickness);
 #if JUCE_ANDROID || JUCE_IOS
-    //setScrollBarsShown(true, true, true, true); //george
+    setScrollBarsShown(true, true, true, true); //george
     setScrollOnDragEnabled (true);
 #endif
     
@@ -157,6 +157,11 @@ void Viewport::setViewPositionProportionately (const double x, const double y)
                          jmax (0, roundToInt (y * (contentComp->getHeight() - getHeight()))));
 }
 //george
+void Viewport::mouseDrag(const MouseEvent &event) {
+    printf("dragFrom inside juce_Viewport.cpp\r\n");
+    //addautoScroll
+}
+    
 bool Viewport::autoScroll (const int mouseX, const int mouseY, const int activeBorderThickness, const int maximumSpeed)
 {
     if (contentComp != nullptr)
@@ -313,7 +318,9 @@ struct Viewport::DragToScrollListener   : private MouseListener,
 
 void Viewport::setScrollOnDragEnabled (bool shouldScrollOnDrag)
 {
-    if (isScrollOnDragEnabled() != shouldScrollOnDrag)
+    printf("isScrollOnDragEnabled(): %i \r\n", isScrollOnDragEnabled());
+    //if (isScrollOnDragEnabled() != shouldScrollOnDrag) //george
+    if (shouldScrollOnDrag) //george
     {
         if (shouldScrollOnDrag)
             dragToScrollListener.reset (new DragToScrollListener (*this));

@@ -718,6 +718,16 @@ void DexedAudioProcessor::updateUI() {
 }
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
+    /* george */
+    /*
+        this is where we will have to stuff the viewport,
+        probably
+     */
+    
+    //create a viewport and stuff the editor into it
+    
+    
+    
     return new DexedAudioProcessorEditor (this); //george uncomment for original
     /* george */
     /*DexedAudioProcessorEditor* theEditor = new DexedAudioProcessorEditor (this);

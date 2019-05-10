@@ -262,9 +262,70 @@ void DexedAudioProcessorEditor::updateUI() {
     setTransform (AffineTransform::scale (scale, scale)); */
     /* george */
 }
+/* george */
 
-void DexedAudioProcessorEditor::mouseMagnify (const MouseEvent& e, float magnifyAmount)
+void DexedAudioProcessorEditor::mouseMove(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseMove(event);
+    printf("mouseMove: send to parent\r\n");
+    /* george */
+}
+void DexedAudioProcessorEditor::mouseEnter(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseEnter(event);
+    printf("mouseEnter: send to parent\r\n");
+    /* george */
+}
+void DexedAudioProcessorEditor::mouseExit(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseExit(event);
+    printf("mouseExit: send to parent\r\n");
+    /* george */
+}
+void DexedAudioProcessorEditor::mouseDrag(const MouseEvent &event) {
+    /* george */
+    auto theParent = getParentComponent();
+    printf("mouseDrag: send to parent\r\n");
+    //autoScroll(event.getScreenX(), event.getScreenY(), 100, 5);
+    
+    /* george */
+}
+void DexedAudioProcessorEditor::mouseUp(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseUp(event);
+    printf("mouseUp: send to parent\r\n");
+    /* george */
+}
+void DexedAudioProcessorEditor::mouseDoubleClick(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseDoubleClick(event);
+    printf("mouseDoubleClick: send to parent\r\n");
+    /* george */
+}
+void DexedAudioProcessorEditor::mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseWheelMove(event, wheel);
+    printf("mouseWheelMove: send to parent\r\n");
+    /* george */
+}
+
+void DexedAudioProcessorEditor::mouseDown (const MouseEvent &event) {
+    printf("mouseDown\r\n");
+    //auto theParent = getParentComponent();
+    //theParent->mouseDown(event);
+    //MouseListener::mouseDown(event);
+}
+void DexedAudioProcessorEditor::mouseMagnify (const MouseEvent &e, float magnifyAmount) 
 {
+    //MouseListener::mouseMagnify(e, magnifyAmount);
+    //auto theParent = getParentComponent();
+    //theParent->mouseMagnify(e, magnifyAmount);
     printf("mouseMagnify\r\n");
 }
 /* george */

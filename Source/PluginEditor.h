@@ -44,24 +44,22 @@ public:
     
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
-    void timerCallback();
+    void timerCallback() override;
     
     /* george */
-    /*bool hasProcessor_m;
-    CriticalSection exitLock;
-    
-    void processorIsDeleted()
-    {
-        hasProcessor_m = false;
-    }*/
+    void mouseMagnify (const MouseEvent &e, float magnifyAmount) override;
+    void mouseDown (const MouseEvent &event) override;
+    void mouseMove(const MouseEvent &event) override;
+    void mouseEnter(const MouseEvent &event) override;
+    void mouseExit(const MouseEvent &event) override;
+    void mouseDrag(const MouseEvent &event) override;
+    void mouseUp(const MouseEvent &event) override;
+    void mouseDoubleClick(const MouseEvent &event) override;
+    void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
     /* george */
     
-    /* george */
-    void mouseMagnify (const MouseEvent& event, float scaleFactor) override;
-    /* george */
-    
-    void paint (Graphics& g);
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+    void paint (Graphics& g) override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void updateUI();
     void rebuildProgramCombobox();
     void loadCart(File file);

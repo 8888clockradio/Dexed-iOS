@@ -289,6 +289,7 @@ private:
             registerClass();
         }
 
+       
         //==============================================================================
         static JuceAudioUnitv3Base* _this (id self)                     { return getIvar<JuceAudioUnitv3Base*> (self, "cppObject"); }
         static void setThis (id self, JuceAudioUnitv3Base* cpp)         { object_setInstanceVariable           (self, "cppObject", cpp); }
@@ -1744,6 +1745,8 @@ public:
         PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_AudioUnitv3;
         initialiseJuce_GUI();
     }
+    Viewport* theViewport;
+    Component* itemHolder;
 
     ~JuceAUViewController()
     {
@@ -1771,22 +1774,36 @@ public:
 
                     JUCE_IOS_MAC_VIEW* view = [[[JUCE_IOS_MAC_VIEW alloc] initWithFrame: convertToCGRect (editor->getBounds())] autorelease];
                     [myself setView: view];
+                    printf("in loadView in AUv3_Wrapper.mm\r\n");
+                    //this area for viewport
+                    MessageManager::getInstance()->callAsync ([=]
+                    {
+                       printf("test\r\n");
+    #if JUCE_IOS
+                       editor->setVisible (false);
+    #else
+                       editor->setVisible (true);
+    #endif
+                       
+                       //so the view is what it is being added to so have to intercept this and maybe rewrite the addToDesktop function for a viewport
+                       //theViewport = new Viewport("UI");
+                       //theViewport->setSize(200, 300);
+                       //itemHolder = new Component();
+                       //itemHolder->setSize(860, 571);
+                       //itemHolder->addAndMakeVisible(editor);
+                       //itemHolder->addChildComponent(editor);
+                       //theViewport->setViewedComponent (itemHolder, true);
+                       //theViewport->addToDesktop (0, view); //this is part of component class so should be easy just need to instantiate the Viewport (from JUCE)
+                       editor->addToDesktop (0, view);
+    #if JUCE_IOS
+                       if (JUCE_IOS_MAC_VIEW* peerView = [[[myself view] subviews] objectAtIndex: 0])
+                           [peerView setContentMode: UIViewContentModeTop];
+                       
+                       if (auto* peer = dynamic_cast<UIViewPeerControllerReceiver*> (editor->getPeer()))
+                           peer->setViewController (myself);
+    #endif
+                   });
 
-                   #if JUCE_IOS
-                    editor->setVisible (false);
-                   #else
-                    editor->setVisible (true);
-                   #endif
-
-                    editor->addToDesktop (0, view);
-
-                   #if JUCE_IOS
-                    if (JUCE_IOS_MAC_VIEW* peerView = [[[myself view] subviews] objectAtIndex: 0])
-                        [peerView setContentMode: UIViewContentModeTop];
-
-                    if (auto* peer = dynamic_cast<UIViewPeerControllerReceiver*> (editor->getPeer()))
-                        peer->setViewController (myself);
-                   #endif
                 }
             }
         }

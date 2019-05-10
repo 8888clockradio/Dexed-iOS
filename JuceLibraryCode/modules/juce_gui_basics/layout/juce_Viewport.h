@@ -57,6 +57,8 @@ public:
 
     /** Destructor. */
     ~Viewport() override;
+    
+    void mouseDrag(const MouseEvent &event) override;
 
     //==============================================================================
     /** Sets the component that this viewport will contain and scroll around.
