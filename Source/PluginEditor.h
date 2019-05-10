@@ -42,6 +42,9 @@ public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
     
+    Viewport* theViewport = new Viewport("UI");
+    Component* itemHolder = new Component();
+    
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
     void timerCallback() override;

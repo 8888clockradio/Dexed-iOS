@@ -718,6 +718,15 @@ void DexedAudioProcessor::updateUI() {
 }
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
+//Viewport* DexedAudioProcessor::createEditor() {
+ 
+    
+    //put an AUv3 checker function in here too it will have to affect the h file
+    //and also the cpp file
+    //return new DexedAudioProcessorEditor (this); //george uncomment for original
+    /*auto * editor = new DexedAudioProcessorEditor (this); //george uncomment for original
+    auto * theViewport = new Viewport("UI");
+    auto * itemHolder = new Component();*/
     /* george */
     /*
         this is where we will have to stuff the viewport,
@@ -725,9 +734,21 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
      */
     
     //create a viewport and stuff the editor into it
+    /*MessageManager::getInstance()->callAsync ([=]
+    {
+        printf("MessageManager::getInstance(): PluginProcessor.cpp \r\n");
+        //so the view is what it is being added to so have to intercept this and maybe rewrite the addToDesktop function for a viewport
+        theViewport->setSize(200, 300);
+        itemHolder->setSize(860, 571);
+        itemHolder->addAndMakeVisible(editor);
+        itemHolder->addChildComponent(editor);
+        theViewport->setViewedComponent (itemHolder, true);
+        //theViewport->addToDesktop (0, view); //this is part of component class so should be easy just need to instantiate the Viewport (from JUCE)
+
+    });
     
     
-    
+    return theViewport;*/
     return new DexedAudioProcessorEditor (this); //george uncomment for original
     /* george */
     /*DexedAudioProcessorEditor* theEditor = new DexedAudioProcessorEditor (this);

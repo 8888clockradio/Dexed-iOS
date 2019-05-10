@@ -80,6 +80,9 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnullability-completeness"
 
+//george
+#include "../../Source/loadEditorWithViewport.h"
+
 using namespace juce;
 
 struct AudioProcessorHolder  : public ReferenceCountedObject
@@ -1745,8 +1748,7 @@ public:
         PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_AudioUnitv3;
         initialiseJuce_GUI();
     }
-    Viewport* theViewport;
-    Component* itemHolder;
+    loadEditorWithViewport* loadEditor;
 
     ~JuceAUViewController()
     {
@@ -1776,9 +1778,13 @@ public:
                     [myself setView: view];
                     printf("in loadView in AUv3_Wrapper.mm\r\n");
                     //this area for viewport
-                    MessageManager::getInstance()->callAsync ([=]
-                    {
-                       printf("test\r\n");
+                    //MessageManager::getInstance()->callAsync ([=]
+                    //{
+                        //add code calling loadEditorWithViewport
+                        printf("test\r\n");
+                        loadEditor = new loadEditorWithViewport(editor);
+                        loadEditor->getEditor()->addToDesktop (0, view);
+                        /*
     #if JUCE_IOS
                        editor->setVisible (false);
     #else
@@ -1786,15 +1792,15 @@ public:
     #endif
                        
                        //so the view is what it is being added to so have to intercept this and maybe rewrite the addToDesktop function for a viewport
-                       //theViewport = new Viewport("UI");
-                       //theViewport->setSize(200, 300);
+                       theViewport = new Viewport("UI");
+                       theViewport->setSize(200, 300);
                        //itemHolder = new Component();
                        //itemHolder->setSize(860, 571);
                        //itemHolder->addAndMakeVisible(editor);
                        //itemHolder->addChildComponent(editor);
                        //theViewport->setViewedComponent (itemHolder, true);
                        //theViewport->addToDesktop (0, view); //this is part of component class so should be easy just need to instantiate the Viewport (from JUCE)
-                       editor->addToDesktop (0, view);
+                       editor->addToDesktop (0, view); */
     #if JUCE_IOS
                        if (JUCE_IOS_MAC_VIEW* peerView = [[[myself view] subviews] objectAtIndex: 0])
                            [peerView setContentMode: UIViewContentModeTop];
@@ -1802,7 +1808,7 @@ public:
                        if (auto* peer = dynamic_cast<UIViewPeerControllerReceiver*> (editor->getPeer()))
                            peer->setViewController (myself);
     #endif
-                   });
+                   //});
 
                 }
             }
