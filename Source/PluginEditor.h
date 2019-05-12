@@ -42,27 +42,12 @@ public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
     
-    Viewport* theViewport = new Viewport("UI");
-    Component* itemHolder = new Component();
-    
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
-    void timerCallback() override;
-    
-    /* george */
-    void mouseMagnify (const MouseEvent &e, float magnifyAmount) override;
-    void mouseDown (const MouseEvent &event) override;
-    void mouseMove(const MouseEvent &event) override;
-    void mouseEnter(const MouseEvent &event) override;
-    void mouseExit(const MouseEvent &event) override;
-    void mouseDrag(const MouseEvent &event) override;
-    void mouseUp(const MouseEvent &event) override;
-    void mouseDoubleClick(const MouseEvent &event) override;
-    void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
-    /* george */
-    
-    void paint (Graphics& g) override;
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void timerCallback();
+
+    void paint (Graphics& g);
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
     void updateUI();
     void rebuildProgramCombobox();
     void loadCart(File file);

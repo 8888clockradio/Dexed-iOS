@@ -390,8 +390,6 @@ void GlobalEditor::resized()
     tune->setBounds (190, 9, 34, 34);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
-    //george
-    //printf("resized: GlobalEditor.cpp\r\n");
 }
 
 void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
@@ -642,68 +640,6 @@ void GlobalEditor::setMonoState(bool state)  {
     monoMode->setToggleState(state ? Button::buttonDown : Button::buttonNormal, dontSendNotification);
 }
 
-/* george */
-
-void GlobalEditor::mouseMove(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseMove(event);
-    printf("mouseMove: send to parent\r\n");
-    /* george */
-}
-void GlobalEditor::mouseEnter(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseEnter(event);
-    printf("mouseEnter: send to parent\r\n");
-    /* george */
-}
-void GlobalEditor::mouseExit(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseExit(event);
-    printf("mouseExit: send to parent\r\n");
-    /* george */
-}
-void GlobalEditor::mouseDrag(const MouseEvent &event) {
-    /* george */
-    auto theParent = getParentComponent();
-    printf("mouseDrag: send to parent\r\n");
-    //autoScroll(event.getScreenX(), event.getScreenY(), 100, 5);
-    
-    /* george */
-}
-void GlobalEditor::mouseUp(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseUp(event);
-    printf("mouseUp: send to parent\r\n");
-    /* george */
-}
-void GlobalEditor::mouseDoubleClick(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseDoubleClick(event);
-    printf("mouseDoubleClick: send to parent\r\n");
-    /* george */
-}
-void GlobalEditor::mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseWheelMove(event, wheel);
-    printf("mouseWheelMove: send to parent\r\n");
-    /* george */
-}
-
-void GlobalEditor::mouseMagnify (const MouseEvent &e, float magnifyAmount)
-{
-    //MouseListener::mouseMagnify(e, magnifyAmount);
-    //auto theParent = getParentComponent();
-    //theParent->mouseMagnify(e, magnifyAmount);
-    printf("mouseMagnify\r\n");
-}
-/* george */
-
 void GlobalEditor::mouseDown(const MouseEvent &e) {
     if ( e.mods.isPopupMenu()) {
         PopupMenu popup;
@@ -711,11 +647,6 @@ void GlobalEditor::mouseDown(const MouseEvent &e) {
         if ( popup.show() == 1 )
            processor->sendCurrentSysexProgram();
     }
-    /* george */
-    auto theParent = getParentComponent();
-    theParent->mouseDown(e);
-    printf("mouseDown: send to parent\r\n");
-    /* george */
 }
 //[/MiscUserCode]
 

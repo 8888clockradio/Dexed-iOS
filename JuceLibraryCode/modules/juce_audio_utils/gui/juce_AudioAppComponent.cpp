@@ -68,9 +68,6 @@ void AudioAppComponent::setAudioChannels (int numInputChannels, int numOutputCha
     }
     else
     {
-        /*audioError = deviceManager.initialise (numInputChannels, numOutputChannels, xml, true);
-         george edit */
-        //audioError = deviceManager.initialise (0, 2, xml, true);
         audioError = deviceManager.initialise (numInputChannels, numOutputChannels, xml, true);
     }
 

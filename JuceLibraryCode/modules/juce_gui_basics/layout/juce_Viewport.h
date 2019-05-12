@@ -56,9 +56,7 @@ public:
     explicit Viewport (const String& componentName = String());
 
     /** Destructor. */
-    ~Viewport() override;
-    
-    void mouseDrag(const MouseEvent &event) override;
+    ~Viewport();
 
     //==============================================================================
     /** Sets the component that this viewport will contain and scroll around.
@@ -274,12 +272,7 @@ public:
     */
     bool canScrollHorizontally() const noexcept;
 
-    /** Enables or disables drag-to-scroll functionality in the viewport.
-
-        If your viewport contains a Component that you don't want to receive mouse events when the
-        user is drag-scrolling, you can disable this with the Component::setViewportIgnoreDragFlag()
-        method.
-    */
+    /** Enables or disables drag-to-scroll functionality in the viewport. */
     void setScrollOnDragEnabled (bool shouldScrollOnDrag);
 
     /** Returns true if drag-to-scroll functionality is enabled. */

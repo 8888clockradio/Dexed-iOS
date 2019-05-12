@@ -47,7 +47,7 @@ public:
 
     //==============================================================================
     /** Creates an empty RectangleList */
-    RectangleList() = default;
+    RectangleList() noexcept {}
 
     /** Creates a copy of another list */
     RectangleList (const RectangleList& other)  : rects (other.rects)
@@ -69,14 +69,14 @@ public:
 
     /** Move constructor */
     RectangleList (RectangleList&& other) noexcept
-        : rects (std::move (other.rects))
+        : rects (static_cast<Array<RectangleType>&&> (other.rects))
     {
     }
 
     /** Move assignment operator */
     RectangleList& operator= (RectangleList&& other) noexcept
     {
-        rects = std::move (other.rects);
+        rects = static_cast<Array<RectangleType>&&> (other.rects);
         return *this;
     }
 

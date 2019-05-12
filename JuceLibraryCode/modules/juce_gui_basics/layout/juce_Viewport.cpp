@@ -31,24 +31,17 @@ Viewport::Viewport (const String& name)  : Component (name)
 {
     // content holder is used to clip the contents so they don't overlap the scrollbars
     addAndMakeVisible (contentHolder);
-    contentHolder.setInterceptsMouseClicks (true, true);
-    
+    contentHolder.setInterceptsMouseClicks (false, true);
+
     scrollBarThickness = getLookAndFeel().getDefaultScrollbarWidth();
-    /*auto contentWidth  = 866;
-     auto contentHeight = 674;
-     */
-    //printf("getLookAndFeel().getDefaultScrollbarWidth(): %i\r\n", getLookAndFeel().getDefaultScrollbarWidth());
-    //george note this may be the area to fix
-    setInterceptsMouseClicks (true, true);
+
+    setInterceptsMouseClicks (false, true);
     setWantsKeyboardFocus (true);
-    Rectangle<int> area = Desktop::getInstance().getDisplays().getMainDisplay().totalArea;
-    //printf("area.getWidth(): %i area.getHeight(): %i \r\n", area.getWidth(), area.getHeight());
-    //contentHolder.setSize(area.getWidth() - scrollBarThickness, area.getHeight() - scrollBarThickness);
-#if JUCE_ANDROID || JUCE_IOS
-    setScrollBarsShown(true, true, true, true); //george
+
+  #if JUCE_ANDROID || JUCE_IOS
     setScrollOnDragEnabled (true);
-#endif
-    
+  #endif
+
     recreateScrollbars();
 }
 
@@ -156,12 +149,7 @@ void Viewport::setViewPositionProportionately (const double x, const double y)
         setViewPosition (jmax (0, roundToInt (x * (contentComp->getWidth()  - getWidth()))),
                          jmax (0, roundToInt (y * (contentComp->getHeight() - getHeight()))));
 }
-//george
-void Viewport::mouseDrag(const MouseEvent &event) {
-    printf("dragFrom inside juce_Viewport.cpp\r\n");
-    //addautoScroll
-}
-    
+
 bool Viewport::autoScroll (const int mouseX, const int mouseY, const int activeBorderThickness, const int maximumSpeed)
 {
     if (contentComp != nullptr)
@@ -226,7 +214,7 @@ struct Viewport::DragToScrollListener   : private MouseListener,
         offsetY.behaviour.setMinimumVelocity (60);
     }
 
-    ~DragToScrollListener() override
+    ~DragToScrollListener()
     {
         viewport.contentHolder.removeMouseListener (this);
         Desktop::getInstance().removeGlobalMouseListener (this);
@@ -256,7 +244,6 @@ struct Viewport::DragToScrollListener   : private MouseListener,
 
     void mouseDrag (const MouseEvent& e) override
     {
-        printf("see if compatible with mouseDrag\r\n"); //george
         if (Desktop::getInstance().getNumDraggingMouseSources() == 1 && ! doesMouseEventComponentBlockViewportDrag (e.eventComponent))
         {
             auto totalOffset = e.getOffsetFromDragStart().toFloat();
@@ -318,9 +305,7 @@ struct Viewport::DragToScrollListener   : private MouseListener,
 
 void Viewport::setScrollOnDragEnabled (bool shouldScrollOnDrag)
 {
-    printf("isScrollOnDragEnabled(): %i \r\n", isScrollOnDragEnabled());
-    //if (isScrollOnDragEnabled() != shouldScrollOnDrag) //george
-    if (shouldScrollOnDrag) //george
+    if (isScrollOnDragEnabled() != shouldScrollOnDrag)
     {
         if (shouldScrollOnDrag)
             dragToScrollListener.reset (new DragToScrollListener (*this));

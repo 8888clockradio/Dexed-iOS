@@ -318,10 +318,6 @@ private:
 
     Array<var>* convertToArray();
     var (const VariantType&) noexcept;
-
-    // This is needed to prevent the wrong constructor/operator being called
-    var (const ReferenceCountedObject*) = delete;
-    var& operator= (const ReferenceCountedObject*) = delete;
 };
 
 /** Compares the values of two var objects, using the var::equals() comparison. */

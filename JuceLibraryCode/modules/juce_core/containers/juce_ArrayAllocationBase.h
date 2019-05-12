@@ -39,20 +39,24 @@ class ArrayAllocationBase  : public TypeOfCriticalSectionToUse
 public:
     //==============================================================================
     /** Creates an empty array. */
-    ArrayAllocationBase() = default;
+    ArrayAllocationBase() noexcept
+    {
+    }
 
     /** Destructor. */
-    ~ArrayAllocationBase() = default;
+    ~ArrayAllocationBase() noexcept
+    {
+    }
 
     ArrayAllocationBase (ArrayAllocationBase&& other) noexcept
-        : elements (std::move (other.elements)),
+        : elements (static_cast<HeapBlock<ElementType>&&> (other.elements)),
           numAllocated (other.numAllocated)
     {
     }
 
     ArrayAllocationBase& operator= (ArrayAllocationBase&& other) noexcept
     {
-        elements = std::move (other.elements);
+        elements = static_cast<HeapBlock<ElementType>&&> (other.elements);
         numAllocated = other.numAllocated;
         return *this;
     }

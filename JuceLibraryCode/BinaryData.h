@@ -8,6 +8,54 @@
 
 namespace BinaryData
 {
+    extern const char*   Contents_json;
+    const int            Contents_jsonSize = 3136;
+
+    extern const char*   IconApp20x201x_png;
+    const int            IconApp20x201x_pngSize = 938;
+
+    extern const char*   IconApp20x202x_png;
+    const int            IconApp20x202x_pngSize = 2581;
+
+    extern const char*   IconApp20x203x_png;
+    const int            IconApp20x203x_pngSize = 4755;
+
+    extern const char*   IconApp29x291x_png;
+    const int            IconApp29x291x_pngSize = 1589;
+
+    extern const char*   IconApp29x292x_png;
+    const int            IconApp29x292x_pngSize = 4502;
+
+    extern const char*   IconApp29x293x_png;
+    const int            IconApp29x293x_pngSize = 8397;
+
+    extern const char*   IconApp40x401x_png;
+    const int            IconApp40x401x_pngSize = 2581;
+
+    extern const char*   IconApp40x402x_png;
+    const int            IconApp40x402x_pngSize = 7349;
+
+    extern const char*   IconApp40x403x_png;
+    const int            IconApp40x403x_pngSize = 13875;
+
+    extern const char*   IconApp60x602x_png;
+    const int            IconApp60x602x_pngSize = 13875;
+
+    extern const char*   IconApp60x603x_png;
+    const int            IconApp60x603x_pngSize = 26244;
+
+    extern const char*   IconApp76x761x_png;
+    const int            IconApp76x761x_pngSize = 6827;
+
+    extern const char*   IconApp76x762x_png;
+    const int            IconApp76x762x_pngSize = 20138;
+
+    extern const char*   IconApp83_5x83_52x_png;
+    const int            IconApp83_5x83_52x_pngSize = 23287;
+
+    extern const char*   ItunesArtwork2x_png;
+    const int            ItunesArtwork2x_pngSize = 310254;
+
     extern const char*   dexedIcon_png;
     const int            dexedIcon_pngSize = 14239;
 
@@ -57,7 +105,7 @@ namespace BinaryData
     const int            OperatorEditor_287x218_pngSize = 10927;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 16;
+    const int namedResourceListSize = 32;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

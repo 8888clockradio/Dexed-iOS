@@ -48,7 +48,7 @@ public:
 
         You can use its operator= method to point it at a proper file.
     */
-    File() = default;
+    File() noexcept  {}
 
     /** Creates a file from an absolute path.
 
@@ -66,7 +66,7 @@ public:
     File (const File&);
 
     /** Destructor. */
-    ~File() = default;
+    ~File() noexcept  {}
 
     /** Sets the file based on an absolute pathname.
 

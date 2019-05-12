@@ -36,7 +36,7 @@ class JUCE_API WebInputStream : public InputStream
     class JUCE_API Listener
     {
     public:
-        virtual ~Listener() = default;
+        virtual ~Listener() {}
 
         virtual bool postDataSendProgress (WebInputStream& /*request*/, int /*bytesSent*/, int /*totalBytes*/)    { return true; }
     };
@@ -50,7 +50,7 @@ class JUCE_API WebInputStream : public InputStream
     */
     WebInputStream (const URL& url, const bool usePost);
 
-    ~WebInputStream() override;
+    ~WebInputStream();
 
 
     /** Add extra headers to http request

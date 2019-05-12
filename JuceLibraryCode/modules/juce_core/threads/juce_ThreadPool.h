@@ -191,7 +191,7 @@ public:
     class JUCE_API  JobSelector
     {
     public:
-        virtual ~JobSelector() = default;
+        virtual ~JobSelector() {}
 
         /** Should return true if the specified thread matches your criteria for whatever
             operation that this object is being used for.

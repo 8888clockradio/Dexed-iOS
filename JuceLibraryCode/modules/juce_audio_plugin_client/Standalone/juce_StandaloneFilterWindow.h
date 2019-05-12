@@ -89,14 +89,12 @@ public:
         if (preferredSetupOptions != nullptr)
             options.reset (new AudioDeviceManager::AudioDeviceSetup (*preferredSetupOptions));
 
-        auto audioInputRequired = (inChannels > 0);
-
-        if (audioInputRequired && RuntimePermissions::isRequired (RuntimePermissions::recordAudio)
+        if (inChannels > 0 && RuntimePermissions::isRequired (RuntimePermissions::recordAudio)
             && ! RuntimePermissions::isGranted (RuntimePermissions::recordAudio))
             RuntimePermissions::request (RuntimePermissions::recordAudio,
                                          [this, preferredDefaultDeviceName] (bool granted) { init (granted, preferredDefaultDeviceName); });
         else
-            init (audioInputRequired, preferredDefaultDeviceName);
+            init (true, preferredDefaultDeviceName);
     }
 
     void init (bool enableAudioInput, const String& preferredDefaultDeviceName)
@@ -331,15 +329,6 @@ public:
             totalOutChannels = defaultConfig.numOuts;
         }
 
-        /*deviceManager.initialise (enableAudioInput ? totalInChannels : 0,
-                                  totalOutChannels,
-                                  savedState.get(),
-                                  true,
-                                  preferredDefaultDeviceName,
-                                  preferredSetupOptions);
-         george edit
-         */
-        
         deviceManager.initialise (enableAudioInput ? totalInChannels : 0,
                                   totalOutChannels,
                                   savedState.get(),
@@ -622,7 +611,6 @@ public:
 
        #if JUCE_IOS || JUCE_ANDROID
         setFullScreen (true);
-        //setContentOwned (new MainContentComponent (*this), false);
         setContentOwned (new MainContentComponent (*this), false);
        #else
         setContentOwned (new MainContentComponent (*this), true);
@@ -722,24 +710,6 @@ public:
     {
         DocumentWindow::resized();
         optionsButton.setBounds (8, 6, 60, getTitleBarHeight() - 8);
-        
-        //george
-        //george
-        //866 x 674
-        //866
-        /*Rectangle<int> area = Desktop::getInstance().getDisplays().getMainDisplay().totalArea;
-        auto contentWidth  = 866;
-        auto contentHeight = 674;
-        auto scaleX = area.getWidth()  / static_cast<float> (contentWidth);
-        auto scaleY = area.getHeight() / static_cast<float> (contentHeight);
-        auto scale  = jmin (scaleX, scaleY);*/
-
-        //this->setTransform (AffineTransform::scale (scale, scale));  //says resizer takes care of it and throws jassert that transform shouldn't be controlled /Users/georgerosar/Documents/GitHub/Dexed-iOS/dexed-master/JuceLibraryCode/modules/juce_gui_basics/windows/juce_ResizableWindow.cpp
-        //this->centreWithSize (contentWidth, contentHeight); //george uncommented
-        //this->setSize(area.getWidth(), area.getHeight()); //george added
-        //this->setSize (contentWidth, contentHeight); //this too
-        /*printf("area.getWidth(): %i area.getHeight(): %i \r\n", area.getWidth(), area.getHeight());
-        printf("juce_StandaloneFilterWindow.h resized() 2\r\n");*/
     }
 
     virtual StandalonePluginHolder* getPluginHolder()    { return pluginHolder.get(); }
@@ -797,24 +767,6 @@ private:
                 notification.setBounds (r.removeFromTop (NotificationArea::height));
 
             editor->setBounds (r);
-            
-            //george
-            //george
-            //866 x 674
-            //866
-            /*Rectangle<int> area = Desktop::getInstance().getDisplays().getMainDisplay().totalArea;
-            auto contentWidth  = 866;
-            auto contentHeight = 674;
-            auto scaleX = area.getWidth()  / static_cast<float> (contentWidth);
-            auto scaleY = area.getHeight() / static_cast<float> (contentHeight);
-            auto scale  = jmin (scaleX, scaleY);
-
-            //editor->setTransform (AffineTransform::scale (scale, scale));
-            //editor->centreWithSize (contentWidth, contentHeight); //george uncommented
-            //editor->setSize(area.getWidth(), area.getHeight()); //george added
-            //this->setSize (contentWidth, contentHeight); //this too
-            printf("area.getWidth(): %i area.getHeight(): %i scale: %f\r\n", area.getWidth(), area.getHeight(), scale);
-            printf("juce_StandaloneFilterWindow.h resized() 3\r\n");*/
         }
 
     private:
@@ -859,24 +811,6 @@ private:
 
                 settingsButton.setBounds (r.removeFromRight (70));
                 notification.setBounds (r);
-                
-                //george
-                //george
-                //866 x 674
-                //866
-                /*Rectangle<int> area = Desktop::getInstance().getDisplays().getMainDisplay().totalArea;
-                auto contentWidth  = 866;
-                auto contentHeight = 674;
-                auto scaleX = area.getWidth()  / static_cast<float> (contentWidth);
-                auto scaleY = area.getHeight() / static_cast<float> (contentHeight);
-                auto scale  = jmin (scaleX, scaleY);
-
-                //this->setTransform (AffineTransform::scale (scale, scale));
-                //this->centreWithSize (contentWidth, contentHeight); //george uncommented
-                //this->setSize(area.getWidth(), area.getHeight()); //george added
-                //this->setSize (contentWidth, contentHeight); //this too
-                printf("area.getWidth(): %i area.getHeight(): %i \r\n", area.getWidth(), area.getHeight());
-                printf("juce_StandaloneFilterWindow.h resized() 4\r\n");*/
             }
         private:
             Label notification;
@@ -911,46 +845,10 @@ private:
         //==============================================================================
         void componentMovedOrResized (Component&, bool, bool wasResized) override
         {
-            
-            
-            //this->setTransform (AffineTransform::scale (scale, scale));
-            //this->centreWithSize (contentWidth, contentHeight); //george uncommented
-            //this->setSize(area.getWidth(), area.getHeight()); //george added
-            //this->setSize (contentWidth, contentHeight); //this too
-            if (wasResized && editor != nullptr) {
-                //george
-                //george
-                //george
-                //866 x 674
-                //866
-                
-                Rectangle<int> area = Desktop::getInstance().getDisplays().getMainDisplay().totalArea;
-                
-                auto contentWidth  = 866;
-                auto contentHeight = 674;
-                auto scaleX = area.getWidth()  / static_cast<float> (contentWidth);
-                auto scaleY = area.getHeight() / static_cast<float> (contentHeight);
-                auto scale  = jmin (scaleX, scaleY);
-                
-                
-                if ((int) area.getHeight() > (int) area.getWidth()) {
-                    setSize (contentWidth,
-                             contentHeight + (shouldShowNotification ? NotificationArea::height : 0));
-                    //printf("inside Tall\r\n");
-                }
-                else {
-                    setSize (contentWidth,
-                             contentHeight + (shouldShowNotification ? NotificationArea::height : 0));
-                    centreWithSize(contentWidth, contentHeight);
-                    //printf("inside Wide\r\n");
-                }
-                setTransform (AffineTransform::scale (scale, scale));
-            }
-            /*if (wasResized && editor != nullptr)
-            setSize (editor->getWidth(),
-                     editor->getHeight() + (shouldShowNotification ? NotificationArea::height : 0));*/
-
-    }
+            if (wasResized && editor != nullptr)
+                setSize (editor->getWidth(),
+                         editor->getHeight() + (shouldShowNotification ? NotificationArea::height : 0));
+        }
 
         //==============================================================================
         StandaloneFilterWindow& owner;

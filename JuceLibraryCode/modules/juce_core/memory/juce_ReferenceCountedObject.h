@@ -99,7 +99,7 @@ public:
 protected:
     //==============================================================================
     /** Creates the reference-counted object (with an initial ref count of zero). */
-    ReferenceCountedObject() = default;
+    ReferenceCountedObject() {}
 
     /** Copying from another object does not affect this one's reference-count. */
     ReferenceCountedObject (const ReferenceCountedObject&) noexcept {}
@@ -187,7 +187,7 @@ public:
 protected:
     //==============================================================================
     /** Creates the reference-counted object (with an initial ref count of zero). */
-    SingleThreadedReferenceCountedObject() = default;
+    SingleThreadedReferenceCountedObject() {}
 
     /** Copying from another object does not affect this one's reference-count. */
     SingleThreadedReferenceCountedObject (const SingleThreadedReferenceCountedObject&) {}
@@ -246,7 +246,7 @@ public:
 
     //==============================================================================
     /** Creates a pointer to a null object. */
-    ReferenceCountedObjectPtr() = default;
+    ReferenceCountedObjectPtr() noexcept {}
 
     /** Creates a pointer to a null object. */
     ReferenceCountedObjectPtr (decltype (nullptr)) noexcept {}

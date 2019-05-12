@@ -34,7 +34,7 @@ namespace juce
 */
 struct VSTCallbackHandler
 {
-    virtual ~VSTCallbackHandler() = default;
+    virtual ~VSTCallbackHandler() {}
 
     /** This is called by the VST plug-in wrapper when it receives unhandled
         plug-in "can do" calls from the host.

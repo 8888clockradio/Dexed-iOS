@@ -129,7 +129,6 @@ void BufferingAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& info
 
                 if (startBufferIndex < endBufferIndex)
                 {
-                    //george note need to spit of some printfs
                     info.buffer->copyFrom (chan, info.startSample + validStart,
                                            buffer,
                                            chan, startBufferIndex,

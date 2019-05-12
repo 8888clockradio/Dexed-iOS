@@ -120,7 +120,7 @@ public:
     */
     explicit HashMap (int numberOfSlots = defaultHashTableSize,
                       HashFunctionType hashFunction = HashFunctionType())
-       : hashFunctionToUse (hashFunction)
+       : hashFunctionToUse (hashFunction), totalNumItems (0)
     {
         hashSlots.insertMultiple (0, nullptr, numberOfSlots);
     }
@@ -479,7 +479,7 @@ private:
 
     HashFunctionType hashFunctionToUse;
     Array<HashEntry*> hashSlots;
-    int totalNumItems = 0;
+    int totalNumItems;
     TypeOfCriticalSectionToUse lock;
 
     int generateHashFor (KeyTypeParameter key, int numSlots) const

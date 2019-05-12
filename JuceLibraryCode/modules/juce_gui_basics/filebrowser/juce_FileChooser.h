@@ -318,7 +318,7 @@ private:
     //==============================================================================
     struct Pimpl
     {
-        virtual ~Pimpl() = default;
+        virtual ~Pimpl() {}
 
         virtual void launch()     = 0;
         virtual void runModally() = 0;

@@ -126,7 +126,7 @@ public :
     StringArray programNames;
     Cartridge currentCart;
     uint8_t data[161];
-    
+
     SysexComm sysexComm;
     VoiceStatus voiceStatus;
     File activeFileCartridge;

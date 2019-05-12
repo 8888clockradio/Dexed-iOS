@@ -48,7 +48,7 @@
 #include <CoreMIDI/CoreMIDI.h>
 #include "CAXException.h"
 
-//temporary location
+//temporaray location
 enum
 {
 	kMidiMessage_NoteOff 			= 0x80,

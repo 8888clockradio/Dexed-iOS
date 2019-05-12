@@ -238,7 +238,7 @@ public:
     {
     public:
         /** Destructor. */
-        virtual ~Listener()  = default;
+        virtual ~Listener()  {}
 
         /** Receives a callback when a parameter has been changed.
 

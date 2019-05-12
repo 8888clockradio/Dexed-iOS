@@ -266,7 +266,7 @@ public:
     */
     inline ElementType& getReference (int index) const noexcept
     {
-        const ScopedLockType lock (getLock());  /* george */ //uncomment
+        const ScopedLockType lock (getLock());
         return values[index];
     }
 

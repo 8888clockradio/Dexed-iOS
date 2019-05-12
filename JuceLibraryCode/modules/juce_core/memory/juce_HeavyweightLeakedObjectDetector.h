@@ -56,7 +56,7 @@ private:
     //==============================================================================
     struct BacktraceMapHolder
     {
-        BacktraceMapHolder() = default;
+        BacktraceMapHolder() noexcept {}
 
         ~BacktraceMapHolder()
         {

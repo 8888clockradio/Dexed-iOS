@@ -181,9 +181,7 @@ OSStatus			AUCarbonViewBase::CreateCarbonView(AudioUnit inAudioUnit, WindowRef i
 			SizeControl(mCarbonPane, (short) (mBottomRight.h - mXOffset), (short) (mBottomRight.v - mYOffset));
 	}
 
-    
-    //printf ("IsCompositWindow(): %i", IsCompositWindow()); //george
-	if (IsCompositWindow()) { //george
+	if (IsCompositWindow()) {
 		// prepare for handling scroll-events
 		EventTypeSpec scrollEvents[] = {
 			{ kEventClassScrollable, kEventScrollableGetInfo },
@@ -193,7 +191,7 @@ OSStatus			AUCarbonViewBase::CreateCarbonView(AudioUnit inAudioUnit, WindowRef i
 		WantEventTypes(GetControlEventTarget(mCarbonPane), GetEventTypeCount(scrollEvents), scrollEvents);
 
 		mCurrentScrollPoint.x = mCurrentScrollPoint.y = 0.0f;
-	} //george
+	}
 
 	return err;
 #else

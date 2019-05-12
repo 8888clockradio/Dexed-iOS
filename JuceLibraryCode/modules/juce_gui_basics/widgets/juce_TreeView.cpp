@@ -1029,7 +1029,7 @@ void TreeView::handleDrag (const StringArray& files, const SourceDetails& dragSo
 {
     const bool scrolled = viewport->autoScroll (dragSourceDetails.localPosition.x,
                                                 dragSourceDetails.localPosition.y, 20, 10);
-    //george
+
     InsertPoint insertPos (*this, files, dragSourceDetails);
 
     if (insertPos.item != nullptr)

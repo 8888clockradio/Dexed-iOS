@@ -49,13 +49,22 @@ public:
     /** Holds the parameters being used by a Reverb object. */
     struct Parameters
     {
-        float roomSize   = 0.5f;     /**< Room size, 0 to 1.0, where 1.0 is big, 0 is small. */
-        float damping    = 0.5f;     /**< Damping, 0 to 1.0, where 0 is not damped, 1.0 is fully damped. */
-        float wetLevel   = 0.33f;    /**< Wet level, 0 to 1.0 */
-        float dryLevel   = 0.4f;     /**< Dry level, 0 to 1.0 */
-        float width      = 1.0f;     /**< Reverb width, 0 to 1.0, where 1.0 is very wide. */
-        float freezeMode = 0.0f;     /**< Freeze mode - values < 0.5 are "normal" mode, values > 0.5
-                                          put the reverb into a continuous feedback loop. */
+        Parameters() noexcept
+          : roomSize   (0.5f),
+            damping    (0.5f),
+            wetLevel   (0.33f),
+            dryLevel   (0.4f),
+            width      (1.0f),
+            freezeMode (0)
+        {}
+
+        float roomSize;     /**< Room size, 0 to 1.0, where 1.0 is big, 0 is small. */
+        float damping;      /**< Damping, 0 to 1.0, where 0 is not damped, 1.0 is fully damped. */
+        float wetLevel;     /**< Wet level, 0 to 1.0 */
+        float dryLevel;     /**< Dry level, 0 to 1.0 */
+        float width;        /**< Reverb width, 0 to 1.0, where 1.0 is very wide. */
+        float freezeMode;   /**< Freeze mode - values < 0.5 are "normal" mode, values > 0.5
+                                 put the reverb into a continuous feedback loop. */
     };
 
     //==============================================================================
@@ -72,9 +81,9 @@ public:
         const float dryScaleFactor = 2.0f;
 
         const float wet = newParams.wetLevel * wetScaleFactor;
-        dryGain.setTargetValue (newParams.dryLevel * dryScaleFactor);
-        wetGain1.setTargetValue (0.5f * wet * (1.0f + newParams.width));
-        wetGain2.setTargetValue (0.5f * wet * (1.0f - newParams.width));
+        dryGain.setValue (newParams.dryLevel * dryScaleFactor);
+        wetGain1.setValue (0.5f * wet * (1.0f + newParams.width));
+        wetGain2.setValue (0.5f * wet * (1.0f - newParams.width));
 
         gain = isFrozen (newParams.freezeMode) ? 0.0f : 0.015f;
         parameters = newParams;
@@ -207,15 +216,15 @@ private:
 
     void setDamping (const float dampingToUse, const float roomSizeToUse) noexcept
     {
-        damping.setTargetValue (dampingToUse);
-        feedback.setTargetValue (roomSizeToUse);
+        damping.setValue (dampingToUse);
+        feedback.setValue (roomSizeToUse);
     }
 
     //==============================================================================
     class CombFilter
     {
     public:
-        CombFilter() noexcept {}
+        CombFilter() noexcept   : bufferSize (0), bufferIndex (0), last (0)  {}
 
         void setSize (const int size)
         {
@@ -250,8 +259,8 @@ private:
 
     private:
         HeapBlock<float> buffer;
-        int bufferSize = 0, bufferIndex = 0;
-        float last = 0.0f;
+        int bufferSize, bufferIndex;
+        float last;
 
         JUCE_DECLARE_NON_COPYABLE (CombFilter)
     };
@@ -260,7 +269,7 @@ private:
     class AllPassFilter
     {
     public:
-        AllPassFilter() noexcept {}
+        AllPassFilter() noexcept  : bufferSize (0), bufferIndex (0) {}
 
         void setSize (const int size)
         {
@@ -291,7 +300,7 @@ private:
 
     private:
         HeapBlock<float> buffer;
-        int bufferSize = 0, bufferIndex = 0;
+        int bufferSize, bufferIndex;
 
         JUCE_DECLARE_NON_COPYABLE (AllPassFilter)
     };
@@ -305,7 +314,7 @@ private:
     CombFilter comb [numChannels][numCombs];
     AllPassFilter allPass [numChannels][numAllPasses];
 
-    SmoothedValue<float> damping, feedback, dryGain, wetGain1, wetGain2;
+    LinearSmoothedValue<float> damping, feedback, dryGain, wetGain1, wetGain2;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Reverb)
 };

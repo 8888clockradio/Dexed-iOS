@@ -36,8 +36,7 @@ public:
         this->value = value;
     }
     void messageCallback() {
-        //ctrl->publishValue(value); //george
-        ctrl->publishValueAsync(value); //george
+        ctrl->publishValue(value);
     }
 };
 
@@ -259,29 +258,21 @@ void Ctrl::publishValueAsync(float value) {
 }
 
 void Ctrl::publishValue(float value) {
-    
-    /* george */
-    /*parent->beginParameterChangeGesture(idx);
+    parent->beginParameterChangeGesture(idx);
     parent->setParameterNotifyingHost(idx, value);
-    parent->endParameterChangeGesture(idx);*/
-    /* george */
-    CtrlUpdate *update = new CtrlUpdate(this, value);
-    update->post();
+    parent->endParameterChangeGesture(idx);
 }
 
 void Ctrl::sliderValueChanged(Slider* moved) {
-    //publishValue(moved->getValue()); //george
-    publishValueAsync(moved->getValue()); //george
+    publishValue(moved->getValue());
 }
 
 void Ctrl::buttonClicked(Button* clicked) {
-    //publishValue(clicked->getToggleState()); //george
-    publishValueAsync(clicked->getToggleState()); //george
+    publishValue(clicked->getToggleState());
 }
 
 void Ctrl::comboBoxChanged(ComboBox* combo) {
-    //publishValue((combo->getSelectedId() - 1) / combo->getNumItems()); //george
-    publishValueAsync((combo->getSelectedId() - 1) / combo->getNumItems()); //george
+    publishValue((combo->getSelectedId() - 1) / combo->getNumItems());
 }
 
 void Ctrl::mouseEnter(const juce::MouseEvent &event) {
@@ -409,8 +400,7 @@ void CtrlDX::updateDisplayName() {
 
 
 void CtrlDX::publishValue(float value) {
-    //Ctrl::publishValue(value / steps); //george
-    Ctrl::publishValueAsync(value / steps); //george
+    Ctrl::publishValue(value / steps);
     updateDisplayName();
 }
 

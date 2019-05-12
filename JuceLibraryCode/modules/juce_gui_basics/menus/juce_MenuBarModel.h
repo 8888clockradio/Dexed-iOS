@@ -46,7 +46,7 @@ public:
     MenuBarModel() noexcept;
 
     /** Destructor. */
-    ~MenuBarModel() override;
+    virtual ~MenuBarModel();
 
     //==============================================================================
     /** Call this when some of your menu items have changed.
@@ -80,7 +80,7 @@ public:
     {
     public:
         /** Destructor. */
-        virtual ~Listener() = default;
+        virtual ~Listener() {}
 
         //==============================================================================
         /** This callback is made when items are changed in the menu bar model. */

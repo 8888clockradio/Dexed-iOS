@@ -321,7 +321,7 @@ public:
 
         if (isDragging() && newMods.isAnyMouseButtonDown())
         {
-            setScreenPos (screenPos, time, shouldUpdate);//george
+            setScreenPos (screenPos, time, shouldUpdate);
         }
         else
         {

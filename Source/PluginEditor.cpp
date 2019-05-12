@@ -36,17 +36,12 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     cartManager(this)
 {
     setSize(866, ownerFilter->showKeyboard ? 674 : 581);
-    
+
     processor = ownerFilter;
     
     lookAndFeel->setDefaultLookAndFeel(lookAndFeel);
     background = lookAndFeel->background;
-    
-    /* george */
-    //hasProcessor_m = true;
-    //processor->setEditorPresent(true, &exitLock);
-    /* george */
-    
+
     // OPERATORS
     addAndMakeVisible(&(operators[0]));
     operators[0].setBounds(2, 1, 287, 218);
@@ -93,16 +88,12 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     
     updateUI();
     startTimer(100);
-    //exitLock.exit(); //george might need to remove this, but communication with processor
 }
 
 DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
     stopTimer();
     processor->unbindUI();
     setLookAndFeel(nullptr);
-    /* george */
-    //if (hasProcessor_m) processor->setEditorPresent(false, nullptr);
-    /* george */
 }
 
 //==============================================================================
@@ -139,7 +130,7 @@ void DexedAudioProcessorEditor::loadCart(File file) {
         if ( rc == 0 )
             return;
     }
-
+    
     processor->loadCartridge(cart);
     rebuildProgramCombobox();
     processor->setCurrentProgram(0);
@@ -147,7 +138,6 @@ void DexedAudioProcessorEditor::loadCart(File file) {
     processor->updateHostDisplay();
     
     processor->activeFileCartridge = file;
-    //exitLock.exit();  //george added because processor->
 }
 
 void DexedAudioProcessorEditor::saveCart() {
@@ -161,7 +151,6 @@ void DexedAudioProcessorEditor::saveCart() {
                                               "Unable to write: " + fc.getResults().getReference(0).getFullPathName());
         }
     }
-    //exitLock.exit();  //george added because processor->
 }
 
 void DexedAudioProcessorEditor::parmShow() {
@@ -188,29 +177,18 @@ void DexedAudioProcessorEditor::parmShow() {
     if ( ret == false ) {
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
     }
-    //exitLock.exit();  //george added because processor->
 }
 
 void DexedAudioProcessorEditor::initProgram() {
     processor->resetToInitVoice();
-    //exitLock.exit();  //george added because processor-> these might need to go after?
 }
 
 void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged) {
     processor->setCurrentProgram(global.programs->getSelectedId()-1);
     processor->updateHostDisplay();
-    //exitLock.exit();  //george added because processor-> these might need to go after?
 }
 
 void DexedAudioProcessorEditor::timerCallback() {
-    /* george */
-    /*exitLock.enter();
-    if (!hasProcessor_m)
-    {
-        exitLock.exit();
-        return;
-    }*/
-    /* george */
     if ( processor->forceRefreshUI ) {
         processor->forceRefreshUI = false;
         updateUI();
@@ -225,7 +203,6 @@ void DexedAudioProcessorEditor::timerCallback() {
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);
     global.updateVu(processor->vuSignal);
-    //exitLock.exit();  //george added because processor-> these might need to go after?
 }   
 
 void DexedAudioProcessorEditor::updateUI() {
@@ -237,98 +214,7 @@ void DexedAudioProcessorEditor::updateUI() {
     }
     rebuildProgramCombobox();
     global.updateDisplay();
-    /* george */
-    /* not working
-    Rectangle<int> area = Desktop::getInstance().getDisplays().getMainDisplay().totalArea;
-    
-    auto contentWidth  = 866;
-    auto contentHeight = processor->showKeyboard ? 674 : 581;
-    auto scaleX = area.getWidth()  / static_cast<float> (contentWidth);
-    auto scaleY = area.getHeight() / static_cast<float> (contentHeight);
-    auto scale  = jmin (scaleX, scaleY);
-    auto scaleReverse = 1 / scale;
-    
-    if ((int) area.getHeight() > (int) area.getWidth()) {
-        setSize (area.getWidth() * scaleReverse,
-                 area.getHeight() * scaleReverse);
-        //printf("inside Tall\r\n");
-    }
-    else {
-        setSize (area.getWidth() * scaleReverse,
-                 area.getHeight() * scaleReverse);
-        centreWithSize(contentWidth, contentHeight);
-        //printf("inside Wide\r\n");
-    }
-    setTransform (AffineTransform::scale (scale, scale)); */
-    /* george */
 }
-/* george */
-
-void DexedAudioProcessorEditor::mouseMove(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseMove(event);
-    printf("mouseMove: send to parent\r\n");
-    /* george */
-}
-void DexedAudioProcessorEditor::mouseEnter(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseEnter(event);
-    printf("mouseEnter: send to parent\r\n");
-    /* george */
-}
-void DexedAudioProcessorEditor::mouseExit(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseExit(event);
-    printf("mouseExit: send to parent\r\n");
-    /* george */
-}
-void DexedAudioProcessorEditor::mouseDrag(const MouseEvent &event) {
-    /* george */
-    auto theParent = getParentComponent();
-    printf("mouseDrag: send to parent\r\n");
-    //autoScroll(event.getScreenX(), event.getScreenY(), 100, 5);
-    
-    /* george */
-}
-void DexedAudioProcessorEditor::mouseUp(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseUp(event);
-    printf("mouseUp: send to parent\r\n");
-    /* george */
-}
-void DexedAudioProcessorEditor::mouseDoubleClick(const MouseEvent &event) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseDoubleClick(event);
-    printf("mouseDoubleClick: send to parent\r\n");
-    /* george */
-}
-void DexedAudioProcessorEditor::mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) {
-    /* george */
-    //auto theParent = getParentComponent();
-    //theParent->mouseWheelMove(event, wheel);
-    printf("mouseWheelMove: send to parent\r\n");
-    /* george */
-}
-
-void DexedAudioProcessorEditor::mouseDown (const MouseEvent &event) {
-    printf("mouseDown\r\n");
-    //auto theParent = getParentComponent();
-    //theParent->mouseDown(event);
-    //MouseListener::mouseDown(event);
-}
-void DexedAudioProcessorEditor::mouseMagnify (const MouseEvent &e, float magnifyAmount) 
-{
-    //MouseListener::mouseMagnify(e, magnifyAmount);
-    //auto theParent = getParentComponent();
-    //theParent->mouseMagnify(e, magnifyAmount);
-    printf("mouseMagnify\r\n");
-}
-/* george */
 
 void DexedAudioProcessorEditor::rebuildProgramCombobox() {
     global.programs->clear(dontSendNotification);
@@ -349,7 +235,6 @@ void DexedAudioProcessorEditor::rebuildProgramCombobox() {
         global.programs->setText("**. " + name, dontSendNotification);
     
     cartManager.resetActiveSysex();
-    //exitLock.exit();  //george added because processor-> these might need to go after?
 }
 
 void DexedAudioProcessorEditor::storeProgram() {
@@ -451,7 +336,6 @@ void DexedAudioProcessorEditor::storeProgram() {
     if ( externalFile != NULL )
         delete externalFile;
     cartManager.resetActiveSysex();
-    //exitLock.exit();  //george added because processor-> these might need to go after?
 }
 
 class MidiCCListener: public AlertWindow, Value::Listener {
