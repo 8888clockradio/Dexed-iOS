@@ -443,6 +443,7 @@ void AlertWindow::updateLayout (const bool onlyIncreaseSize)
     for (auto* b : buttons)
         totalWidth += b->getWidth() + spacer;
 
+    //george maybe comment this out for the viewport
     auto x = (w - totalWidth) / 2;
     auto y = (int) (getHeight() * 0.95f);
 

@@ -43,7 +43,7 @@ public:
         startTimer (100);
     }
 
-    virtual ~ParameterListener()
+    ~ParameterListener() override
     {
         if (LegacyAudioParameter::isLegacy (&parameter))
             processor.removeListener (this);
@@ -517,13 +517,11 @@ struct GenericAudioProcessorEditor::Pimpl
         juceParameters.update (*p, false);
 
         owner.setOpaque (true);
-        
-        
-        //george here
+
         view.setViewedComponent (new ParametersPanel (*p, juceParameters.params));
         owner.addAndMakeVisible (view);
 
-        view.setScrollBarsShown (true, false);
+        view.setScrollBarsShown (true, true, true, true);
     }
 
 

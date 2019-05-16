@@ -75,7 +75,12 @@ DexedAudioProcessor::DexedAudioProcessor() {
     }
     TRACE("Hi");
 #endif
-
+    
+    /* george */
+    /*exitLock_m = nullptr;
+    editorIsPresent_m = false;*/
+    /* george */
+    
     Exp2::init();
     Tanh::init();
     Sin::init();
@@ -93,7 +98,21 @@ DexedAudioProcessor::DexedAudioProcessor() {
     sendSysexChange = true;
     normalizeDxVelocity = false;
     sysexComm.listener = this;
-    showKeyboard = true;
+    /* george */
+    printf("PluginHostType::getPluginLoadedAs(): %u \r\n", PluginHostType::getPluginLoadedAs());
+    switch( PluginHostType::getPluginLoadedAs() )
+    {
+        case AudioProcessor::wrapperType_Undefined: showKeyboard = true; printf("showKeyboard: true\r\n");
+            break;
+        case AudioProcessor::wrapperType_AudioUnitv3: showKeyboard = false; printf("showKeyboard: false\r\n");
+            break;
+        case AudioProcessor::wrapperType_AudioUnit: showKeyboard = false; printf("showKeyboard: false\r\n");
+            break;
+        case AudioProcessor::wrapperType_Standalone: showKeyboard = true; printf("showKeyboard: true\r\n");
+            break;
+        default: showKeyboard = true; printf("default showKeyboard: true\r\n");
+            break;
+    }
     
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
     setEngineType(DEXED_ENGINE_MARKI);
@@ -121,6 +140,12 @@ DexedAudioProcessor::~DexedAudioProcessor() {
 		delete tmp;
 	}
     TRACE("Bye");
+    /* george */
+    /*if (exitLock_m) { exitLock_m->enter(); }
+    if (editorIsPresent_m) { ((DexedAudioProcessorEditor*)editor_m)->processorIsDeleted();
+    }
+    if (exitLock_m) { exitLock_m->exit(); }*/
+    /* george */
 }
 
 //==============================================================================
@@ -280,8 +305,21 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             vuSignal = 0;
     }
     
+    //printf("getMainBusNumOutputChannels(): %i\r\n", getMainBusNumOutputChannels());
+    
     // DX7 is a mono synth
-    buffer.copyFrom(1, 0, channelData, numSamples, 1);
+    if (getMainBusNumOutputChannels() > 1) //george fix that works
+    {
+        buffer.copyFrom(1, 0, channelData, numSamples, 1);
+    }
+    //george NOTE
+    /*
+     void copyFrom (int destChannel,
+     int destStartSample,
+     const Type* source,
+     int numSamples,
+     Type gain) noexcept
+     */
 }
 
 
@@ -680,7 +718,43 @@ void DexedAudioProcessor::updateUI() {
 }
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
-    return new DexedAudioProcessorEditor (this);
+//Viewport* DexedAudioProcessor::createEditor() {
+ 
+    
+    //put an AUv3 checker function in here too it will have to affect the h file
+    //and also the cpp file
+    //return new DexedAudioProcessorEditor (this); //george uncomment for original
+    /*auto * editor = new DexedAudioProcessorEditor (this); //george uncomment for original
+    auto * theViewport = new Viewport("UI");
+    auto * itemHolder = new Component();*/
+    /* george */
+    /*
+        this is where we will have to stuff the viewport,
+        probably
+     */
+    
+    //create a viewport and stuff the editor into it
+    /*MessageManager::getInstance()->callAsync ([=]
+    {
+        printf("MessageManager::getInstance(): PluginProcessor.cpp \r\n");
+        //so the view is what it is being added to so have to intercept this and maybe rewrite the addToDesktop function for a viewport
+        theViewport->setSize(200, 300);
+        itemHolder->setSize(860, 571);
+        itemHolder->addAndMakeVisible(editor);
+        itemHolder->addChildComponent(editor);
+        theViewport->setViewedComponent (itemHolder, true);
+        //theViewport->addToDesktop (0, view); //this is part of component class so should be easy just need to instantiate the Viewport (from JUCE)
+
+    });
+    
+    
+    return theViewport;*/
+    return new DexedAudioProcessorEditor (this); //george uncomment for original
+    /* george */
+    /*DexedAudioProcessorEditor* theEditor = new DexedAudioProcessorEditor (this);
+    editor_m = (void *)theEditor;
+    return theEditor;*/
+    /* george */
 }
 
 void DexedAudioProcessor::handleAsyncUpdate() {

@@ -53,7 +53,15 @@ public:
     void updateGain(float v);
     void updateDisplay();
     void updateEnvPos(char pos);
-    void mouseDown(const MouseEvent& e) override;
+    void mouseDown(const MouseEvent &event) override;
+    void mouseMagnify (const MouseEvent &event, float scaleFactor) override;
+    void mouseMove(const MouseEvent &event) override;
+    void mouseEnter(const MouseEvent &event) override;
+    void mouseExit(const MouseEvent &event) override;
+    void mouseDrag(const MouseEvent &event) override;
+    void mouseUp(const MouseEvent &event) override;
+    void mouseDoubleClick(const MouseEvent &event) override;
+    void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override; 
     //[/UserMethods]
 
     void paint (Graphics& g) override;

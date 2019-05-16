@@ -226,21 +226,25 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (vuOutput = new VuMeter());
     vuOutput->setName ("vuOutput");
 
+    
+    //init
     addAndMakeVisible (initButton = new TextButton ("initButton"));
     initButton->setButtonText (TRANS("INIT"));
     initButton->addListener (this);
 
+    
+    //parm
     addAndMakeVisible (parmButton = new TextButton ("parmButton"));
     parmButton->setButtonText (TRANS("PARM"));
-    parmButton->addListener (this);
+    parmButton->addListener (this); //george
 
     addAndMakeVisible (cartButton = new TextButton ("cartButton"));
     cartButton->setButtonText (TRANS("CART"));
-    cartButton->addListener (this);
+    cartButton->addListener (this); //george
 
     addAndMakeVisible (storeButton = new TextButton ("storeButton"));
     storeButton->setButtonText (TRANS("STORE"));
-    storeButton->addListener (this);
+    storeButton->addListener (this); //george
 
     addAndMakeVisible (monoMode = new ToggleButton ("monoMode"));
     monoMode->setButtonText (String());
@@ -254,7 +258,7 @@ GlobalEditor::GlobalEditor ()
 
     addAndMakeVisible (aboutButton = new ImageButton ("aboutButton"));
     aboutButton->setButtonText (String());
-    aboutButton->addListener (this);
+    //aboutButton->addListener (this); //george
 
     aboutButton->setImages (false, true, false,
                             Image(), 1.000f, Colour (0x00000000),
@@ -390,6 +394,8 @@ void GlobalEditor::resized()
     tune->setBounds (190, 9, 34, 34);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
+    //george
+    //printf("resized: GlobalEditor.cpp\r\n");
 }
 
 void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
@@ -529,24 +535,32 @@ void GlobalEditor::buttonClicked (Button* buttonThatWasClicked)
     }
     else if (buttonThatWasClicked == initButton)
     {
+        //this one george
+        
         //[UserButtonCode_initButton] -- add your button handler code here..
         editor->initProgram();
         //[/UserButtonCode_initButton]
     }
     else if (buttonThatWasClicked == parmButton)
     {
+        //this one george
+        
         //[UserButtonCode_parmButton] -- add your button handler code here..
         editor->parmShow();
         //[/UserButtonCode_parmButton]
     }
     else if (buttonThatWasClicked == cartButton)
     {
+        //this one george
+        
         //[UserButtonCode_cartButton] -- add your button handler code here..
         editor->cartShow();
         //[/UserButtonCode_cartButton]
     }
     else if (buttonThatWasClicked == storeButton)
     {
+        //this one george
+        
         //[UserButtonCode_storeButton] -- add your button handler code here..
         editor->storeProgram();
         //[/UserButtonCode_storeButton]
@@ -560,6 +574,7 @@ void GlobalEditor::buttonClicked (Button* buttonThatWasClicked)
     }
     else if (buttonThatWasClicked == aboutButton)
     {
+        //this one george
         //[UserButtonCode_aboutButton] -- add your button handler code here..
         AboutBox about(this->getParentComponent());
         about.runModalLoop();
@@ -640,6 +655,68 @@ void GlobalEditor::setMonoState(bool state)  {
     monoMode->setToggleState(state ? Button::buttonDown : Button::buttonNormal, dontSendNotification);
 }
 
+/* george */
+
+void GlobalEditor::mouseMove(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseMove(event);
+    //printf("mouseMove: send to parent\r\n");
+    /* george */
+}
+void GlobalEditor::mouseEnter(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseEnter(event);
+    //printf("mouseEnter: send to parent\r\n");
+    /* george */
+}
+void GlobalEditor::mouseExit(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseExit(event);
+    //printf("mouseExit: send to parent\r\n");
+    /* george */
+}
+void GlobalEditor::mouseDrag(const MouseEvent &event) {
+    /* george */
+    auto theParent = getParentComponent();
+    //printf("mouseDrag: send to parent\r\n");
+    //autoScroll(event.getScreenX(), event.getScreenY(), 100, 5);
+    
+    /* george */
+}
+void GlobalEditor::mouseUp(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseUp(event);
+    //printf("mouseUp: send to parent\r\n");
+    /* george */
+}
+void GlobalEditor::mouseDoubleClick(const MouseEvent &event) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseDoubleClick(event);
+    //printf("mouseDoubleClick: send to parent\r\n");
+    /* george */
+}
+void GlobalEditor::mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) {
+    /* george */
+    //auto theParent = getParentComponent();
+    //theParent->mouseWheelMove(event, wheel);
+    //printf("mouseWheelMove: send to parent\r\n");
+    /* george */
+}
+
+void GlobalEditor::mouseMagnify (const MouseEvent &e, float magnifyAmount)
+{
+    //MouseListener::mouseMagnify(e, magnifyAmount);
+    //auto theParent = getParentComponent();
+    //theParent->mouseMagnify(e, magnifyAmount);
+    //printf("mouseMagnify\r\n");
+}
+/* george */
+
 void GlobalEditor::mouseDown(const MouseEvent &e) {
     if ( e.mods.isPopupMenu()) {
         PopupMenu popup;
@@ -647,6 +724,11 @@ void GlobalEditor::mouseDown(const MouseEvent &e) {
         if ( popup.show() == 1 )
            processor->sendCurrentSysexProgram();
     }
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseDown(e);
+    //printf("mouseDown: send to parent\r\n");
+    /* george */
 }
 //[/MiscUserCode]
 

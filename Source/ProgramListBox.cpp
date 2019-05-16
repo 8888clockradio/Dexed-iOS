@@ -84,6 +84,9 @@ void ProgramListBox::paint(Graphics &g) {
 void ProgramListBox::resized() {
     cellWidth = getWidth() / cols;
     cellHeight = getHeight() / rows;
+    //george
+    //printf("resized: ProgramListBox.cpp\r\n");
+    //printf("ProgramListBox.cpp cellWidth: %d cellHeight: %f\r\n", cellWidth, cellHeight);
 }
 
 void ProgramListBox::setCartridge(Cartridge &cart) {

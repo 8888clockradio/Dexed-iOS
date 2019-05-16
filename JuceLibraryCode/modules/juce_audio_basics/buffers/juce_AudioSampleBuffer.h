@@ -172,14 +172,14 @@ public:
     /** Destructor.
         This will free any memory allocated by the buffer.
     */
-    ~AudioBuffer() noexcept {}
+    ~AudioBuffer() = default;
 
     /** Move constructor */
     AudioBuffer (AudioBuffer&& other) noexcept
         : numChannels (other.numChannels),
           size (other.size),
           allocatedBytes (other.allocatedBytes),
-          allocatedData (static_cast<HeapBlock<char, true>&&> (other.allocatedData)),
+          allocatedData (std::move (other.allocatedData)),
           isClear (other.isClear)
     {
         if (numChannels < (int) numElementsInArray (preallocatedChannelSpace))
@@ -205,7 +205,7 @@ public:
         numChannels = other.numChannels;
         size = other.size;
         allocatedBytes = other.allocatedBytes;
-        allocatedData = static_cast<HeapBlock<char, true>&&> (other.allocatedData);
+        allocatedData = std::move (other.allocatedData);
         isClear = other.isClear;
 
         if (numChannels < (int) numElementsInArray (preallocatedChannelSpace))
@@ -904,7 +904,10 @@ public:
                    int numSamples,
                    Type gain) noexcept
     {
+        //printf("destChannel: %i numChannels %i\r\n", destChannel, numChannels);
         jassert (isPositiveAndBelow (destChannel, numChannels));
+        //jassert (isPositiveAndBelow (destChannel, 2));  //crashes immediately need to find out why numChannels is only 1
+        //george edit
         jassert (destStartSample >= 0 && numSamples >= 0 && destStartSample + numSamples <= size);
         jassert (source != nullptr);
 
@@ -1080,7 +1083,7 @@ private:
         allocatedBytes = (size_t) numChannels * (size_t) size * sizeof (Type) + channelListSize + 32;
         allocatedData.malloc (allocatedBytes);
         channels = reinterpret_cast<Type**> (allocatedData.get());
-        auto* chan = (Type*) (allocatedData + channelListSize);
+        auto chan = reinterpret_cast<Type*> (allocatedData + channelListSize);
 
         for (int i = 0; i < numChannels; ++i)
         {

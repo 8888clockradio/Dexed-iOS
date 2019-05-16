@@ -141,7 +141,7 @@
 #endif
 
 #ifndef    JUCE_FORCE_USE_LEGACY_PARAM_IDS
- //#define JUCE_FORCE_USE_LEGACY_PARAM_IDS 0
+ #define JUCE_FORCE_USE_LEGACY_PARAM_IDS 1
 #endif
 
 #ifndef    JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE
@@ -160,7 +160,7 @@
 // juce_audio_processors flags:
 
 #ifndef    JUCE_PLUGINHOST_VST
- #define   JUCE_PLUGINHOST_VST 1
+ #define   JUCE_PLUGINHOST_VST 0
 #endif
 
 #ifndef    JUCE_PLUGINHOST_VST3
@@ -330,7 +330,7 @@
  #define JucePlugin_Desc                   "Dexed FM Synth"
 #endif
 #ifndef  JucePlugin_Manufacturer
- #define JucePlugin_Manufacturer           "Digital Suburban - iOS port by georgerosar.com"
+ #define JucePlugin_Manufacturer           "georgerosar.com: Dexed"
 #endif
 #ifndef  JucePlugin_ManufacturerWebsite
  #define JucePlugin_ManufacturerWebsite    ""
@@ -411,7 +411,7 @@
  #define JucePlugin_RTASDisableMultiMono   0
 #endif
 #ifndef  JucePlugin_AAXIdentifier
- #define JucePlugin_AAXIdentifier          com.georgerosar.DexedAU
+ #define JucePlugin_AAXIdentifier          com.georgerosar.Dexed
 #endif
 #ifndef  JucePlugin_AAXManufacturerCode
  #define JucePlugin_AAXManufacturerCode    JucePlugin_ManufacturerCode
@@ -435,7 +435,7 @@
  #define JucePlugin_IAASubType             JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_IAAName
- #define JucePlugin_IAAName                "Digital Suburban - iOS port by georgerosar.com: Dexed"
+ #define JucePlugin_IAAName                "georgerosar.com: Dexed"
 #endif
 #ifndef  JucePlugin_VSTNumMidiInputs
  #define JucePlugin_VSTNumMidiInputs       16

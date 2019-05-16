@@ -163,7 +163,7 @@ namespace AudioUnitFormatHelpers
                 desc.componentSubType      = stringToOSType (tokens[1]);
                 desc.componentManufacturer = stringToOSType (tokens[2]);
 
-                if (AudioComponent comp = AudioComponentFindNext (0, &desc))
+                if (AudioComponent comp = AudioComponentFindNext (nullptr, &desc))
                 {
                     getNameAndManufacturer (comp, name, manufacturer);
 
@@ -206,17 +206,17 @@ namespace AudioUnitFormatHelpers
 
         const char* const utf8 = fileOrIdentifier.toUTF8();
 
-        if (CFURLRef url = CFURLCreateFromFileSystemRepresentation (0, (const UInt8*) utf8,
+        if (CFURLRef url = CFURLCreateFromFileSystemRepresentation (nullptr, (const UInt8*) utf8,
                                                                     (CFIndex) strlen (utf8), file.isDirectory()))
         {
             CFBundleRef bundleRef = CFBundleCreate (kCFAllocatorDefault, url);
             CFRelease (url);
 
-            if (bundleRef != 0)
+            if (bundleRef != nullptr)
             {
                 CFTypeRef bundleName = CFBundleGetValueForInfoDictionaryKey (bundleRef, CFSTR("CFBundleName"));
 
-                if (bundleName != 0 && CFGetTypeID (bundleName) == CFStringGetTypeID())
+                if (bundleName != nullptr && CFGetTypeID (bundleName) == CFStringGetTypeID())
                     name = String::fromCFString ((CFStringRef) bundleName);
 
                 if (name.isEmpty())
@@ -224,12 +224,12 @@ namespace AudioUnitFormatHelpers
 
                 CFTypeRef versionString = CFBundleGetValueForInfoDictionaryKey (bundleRef, CFSTR("CFBundleVersion"));
 
-                if (versionString != 0 && CFGetTypeID (versionString) == CFStringGetTypeID())
+                if (versionString != nullptr && CFGetTypeID (versionString) == CFStringGetTypeID())
                     version = String::fromCFString ((CFStringRef) versionString);
 
                 CFTypeRef manuString = CFBundleGetValueForInfoDictionaryKey (bundleRef, CFSTR("CFBundleGetInfoString"));
 
-                if (manuString != 0 && CFGetTypeID (manuString) == CFStringGetTypeID())
+                if (manuString != nullptr && CFGetTypeID (manuString) == CFStringGetTypeID())
                     manufacturer = String::fromCFString ((CFStringRef) manuString);
 
                 const ResFileRefNum resFileId = CFBundleOpenBundleResourceMap (bundleRef);
@@ -256,7 +256,7 @@ namespace AudioUnitFormatHelpers
                             desc.componentSubType = types[1];
                             desc.componentManufacturer = types[2];
 
-                            if (AudioComponent comp = AudioComponentFindNext (0, &desc))
+                            if (AudioComponent comp = AudioComponentFindNext (nullptr, &desc))
                                 getNameAndManufacturer (comp, name, manufacturer);
 
                             break;
@@ -333,7 +333,7 @@ public:
             auValueStrings = Parameter::getAllValueStrings();
         }
 
-        virtual float getValue() const override
+        float getValue() const override
         {
             const ScopedLock sl (pluginInstance.lock);
 
@@ -348,7 +348,7 @@ public:
             return value;
         }
 
-        virtual void setValue (float newValue) override
+        void setValue (float newValue) override
         {
             const ScopedLock sl (pluginInstance.lock);
 
@@ -506,7 +506,7 @@ public:
           auComponent (AudioComponentInstanceGetComponent (au)),
           audioUnit (au),
         #if JUCE_MAC
-          eventListenerRef (0),
+          eventListenerRef (nullptr),
         #endif
           midiConcatenator (2048)
     {
@@ -529,7 +529,7 @@ public:
         updateSupportedLayouts();
     }
 
-    ~AudioUnitPluginInstance()
+    ~AudioUnitPluginInstance() override
     {
         const ScopedLock sl (lock);
 
@@ -574,10 +574,10 @@ public:
     void cleanup()
     {
        #if JUCE_MAC
-        if (eventListenerRef != 0)
+        if (eventListenerRef != nullptr)
         {
             AUListenerDispose (eventListenerRef);
-            eventListenerRef = 0;
+            eventListenerRef = nullptr;
         }
        #endif
 
@@ -902,7 +902,24 @@ public:
                         AudioUnitGetProperty (audioUnit, kAudioUnitProperty_SampleRate, scope, static_cast<UInt32> (i), &sampleRate, &sampleRateSize);
 
                         if (sampleRate != sr)
-                            AudioUnitSetProperty (audioUnit, kAudioUnitProperty_SampleRate, scope, static_cast<UInt32> (i), &sr, sizeof (sr));
+                        {
+                            if (isAUv3) // setting kAudioUnitProperty_SampleRate fails on AUv3s
+                            {
+                                AudioStreamBasicDescription stream;
+                                UInt32 dataSize = sizeof (stream);
+                                auto err = AudioUnitGetProperty (audioUnit, kAudioUnitProperty_StreamFormat, scope, static_cast<UInt32> (i), &stream, &dataSize);
+
+                                if (err == noErr && dataSize == sizeof (stream))
+                                {
+                                    stream.mSampleRate = sr;
+                                    AudioUnitSetProperty (audioUnit, kAudioUnitProperty_StreamFormat, scope, static_cast<UInt32> (i), &stream, sizeof (stream));
+                                }
+                            }
+                            else
+                            {
+                                AudioUnitSetProperty (audioUnit, kAudioUnitProperty_SampleRate, scope, static_cast<UInt32> (i), &sr, sizeof (sr));
+                            }
+                        }
 
                         if (isInput)
                         {
@@ -1275,7 +1292,7 @@ public:
 
     void getCurrentProgramStateInformation (MemoryBlock& destData) override
     {
-        CFPropertyListRef propertyList = 0;
+        CFPropertyListRef propertyList = nullptr;
         UInt32 sz = sizeof (CFPropertyListRef);
 
         if (AudioUnitGetProperty (audioUnit,
@@ -1286,7 +1303,7 @@ public:
             CFWriteStreamRef stream = CFWriteStreamCreateWithAllocatedBuffers (kCFAllocatorDefault, kCFAllocatorDefault);
             CFWriteStreamOpen (stream);
 
-            CFIndex bytesWritten = CFPropertyListWriteToStream (propertyList, stream, kCFPropertyListBinaryFormat_v1_0, 0);
+            CFIndex bytesWritten = CFPropertyListWriteToStream (propertyList, stream, kCFPropertyListBinaryFormat_v1_0, nullptr);
             CFWriteStreamClose (stream);
 
             CFDataRef data = (CFDataRef) CFWriteStreamCopyProperty (stream, kCFStreamPropertyDataWritten);
@@ -1313,10 +1330,10 @@ public:
 
         CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0;
         CFPropertyListRef propertyList = CFPropertyListCreateFromStream (kCFAllocatorDefault, stream, 0,
-                                                                         kCFPropertyListImmutable, &format, 0);
+                                                                         kCFPropertyListImmutable, &format, nullptr);
         CFRelease (stream);
 
-        if (propertyList != 0)
+        if (propertyList != nullptr)
         {
             AudioUnitSetProperty (audioUnit, kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global,
                                   0, &propertyList, sizeof (propertyList));
@@ -1426,7 +1443,7 @@ public:
                                 auto getClumpName = [this, info]
                                 {
                                     AudioUnitParameterNameInfo clumpNameInfo;
-                                    UInt32 sz = sizeof (clumpNameInfo);
+                                    UInt32 clumpSz = sizeof (clumpNameInfo);
                                     zerostruct (clumpNameInfo);
                                     clumpNameInfo.inID = info.clumpID;
                                     clumpNameInfo.inDesiredLength = (SInt32) 256;
@@ -1436,7 +1453,7 @@ public:
                                                               kAudioUnitScope_Global,
                                                               0,
                                                               &clumpNameInfo,
-                                                              &sz) == noErr)
+                                                              &clumpSz) == noErr)
                                         return String::fromCFString (clumpNameInfo.outName);
 
                                     return String (info.clumpID);
@@ -1589,11 +1606,11 @@ private:
         {
             String lowercaseText (text.toLowerCase());
 
-            for (auto& testText : onStrings)
+            for (auto& testText : auOnStrings)
                 if (lowercaseText == testText)
                     return 1.0f;
 
-            for (auto& testText : offStrings)
+            for (auto& testText : auOffStrings)
                 if (lowercaseText == testText)
                     return 0.0f;
 
@@ -1611,8 +1628,8 @@ private:
         String getLabel() const override                                    { return {}; }
 
         AudioUnitPluginInstance& parent;
-        const StringArray onStrings  { TRANS("on"),  TRANS("yes"), TRANS("true") };
-        const StringArray offStrings { TRANS("off"), TRANS("no"),  TRANS("false") };
+        const StringArray auOnStrings  { TRANS("on"),  TRANS("yes"), TRANS("true") };
+        const StringArray auOffStrings { TRANS("off"), TRANS("no"),  TRANS("false") };
         const StringArray values { TRANS("Off"), TRANS("On") };
 
         bool currentValue = false;
@@ -2245,7 +2262,7 @@ public:
         createView (createGenericViewIfNeeded);
     }
 
-    ~AudioUnitPluginWindowCocoa()
+    ~AudioUnitPluginWindowCocoa() override
     {
         if (wrapper.getView() != nil)
         {
@@ -2266,9 +2283,14 @@ public:
         ignoreUnused (size);
         if (pluginView != nil)
             wrapper.resizeToFitView();
+        printf("embedViewController() juce_AudioUnitPluginFormat.mm is MAC\r\n");
       #else
         [pluginView setBounds: CGRectMake (0.f, 0.f, static_cast<int> (size.width), static_cast<int> (size.height))];
         wrapper.setSize (static_cast<int> (size.width), static_cast<int> (size.height));
+        //george
+        printf("embedViewController() juce_AudioUnitPluginFormat.mm not MAC\r\n");
+        printf("size.width: %f size.height: %f \r\n", size.width, size.height);
+        //george
       #endif
     }
    #endif
@@ -2323,7 +2345,7 @@ private:
             {
                 NSString* viewClassName = (NSString*) (info->mCocoaAUViewClass[0]);
                 CFStringRef path = CFURLCopyPath (info->mCocoaAUViewBundleLocation);
-                NSString* unescapedPath = (NSString*) CFURLCreateStringByReplacingPercentEscapes (0, path, CFSTR (""));
+                NSString* unescapedPath = (NSString*) CFURLCreateStringByReplacingPercentEscapes (nullptr, path, CFSTR (""));
                 CFRelease (path);
                 NSBundle* viewBundle = [NSBundle bundleWithPath: [unescapedPath autorelease]];
                 Class viewClass = [viewBundle classNamed: viewClassName];
@@ -2645,7 +2667,7 @@ void AudioUnitPluginFormat::createPluginInstance (const PluginDescription& desc,
             return;
         }
 
-        if ((auComponent = AudioComponentFindNext (0, &componentDesc)) == nullptr)
+        if ((auComponent = AudioComponentFindNext (nullptr, &componentDesc)) == nullptr)
         {
             callback (userData, nullptr, errMessage);
             return;
@@ -2744,7 +2766,7 @@ bool AudioUnitPluginFormat::requiresUnblockedMessageThreadDuringCreation (const 
            || AudioUnitFormatHelpers::getComponentDescFromFile (desc.fileOrIdentifier, componentDesc,
                                                                 pluginName, version, manufacturer))
     {
-        if (AudioComponent auComp = AudioComponentFindNext (0, &componentDesc))
+        if (AudioComponent auComp = AudioComponentFindNext (nullptr, &componentDesc))
             if (AudioComponentGetDescription (auComp, &componentDesc) == noErr)
                 return ((componentDesc.componentFlags & kAudioComponentFlag_IsV3AudioUnit) != 0);
     }

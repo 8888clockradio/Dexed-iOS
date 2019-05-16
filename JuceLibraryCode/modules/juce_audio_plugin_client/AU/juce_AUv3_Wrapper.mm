@@ -80,6 +80,9 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnullability-completeness"
 
+//george
+//#include "../../Source/loadEditorWithViewport.h"
+
 using namespace juce;
 
 struct AudioProcessorHolder  : public ReferenceCountedObject
@@ -289,6 +292,7 @@ private:
             registerClass();
         }
 
+       
         //==============================================================================
         static JuceAudioUnitv3Base* _this (id self)                     { return getIvar<JuceAudioUnitv3Base*> (self, "cppObject"); }
         static void setThis (id self, JuceAudioUnitv3Base* cpp)         { object_setInstanceVariable           (self, "cppObject", cpp); }
@@ -362,6 +366,7 @@ private:
         static NSArray<AUAudioUnitPreset*>* getFactoryPresets (id self, SEL)                        { return _this (self)->getFactoryPresets(); }
         static NSDictionary<NSString*, id>* getFullState (id self, SEL)                             { return _this (self)->getFullState(); }
         static void setFullState (id self, SEL, NSDictionary<NSString *, id>* state)                { return _this (self)->setFullState (state); }
+        //george auv3
         static AUParameterTree*     getParameterTree (id self, SEL)                                 { return _this (self)->getParameterTree(); }
         static NSArray<NSNumber*>* parametersForOverviewWithCount (id self, SEL, NSInteger count)   { return _this (self)->parametersForOverviewWithCount (static_cast<int> (count)); }
 
@@ -1743,6 +1748,9 @@ public:
         PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_AudioUnitv3;
         initialiseJuce_GUI();
     }
+    //loadEditorWithViewport* loadEditor;
+    //Viewport* ourViewport;
+    //Component* ourItemHolder;
 
     ~JuceAUViewController()
     {
@@ -1767,25 +1775,56 @@ public:
                 if (AudioProcessorEditor* editor = processor.createEditorIfNeeded())
                 {
                     preferredSize = editor->getBounds();
-
+                    Rectangle<int> area = Rectangle(0, 0, 200, 300);
+                    
                     JUCE_IOS_MAC_VIEW* view = [[[JUCE_IOS_MAC_VIEW alloc] initWithFrame: convertToCGRect (editor->getBounds())] autorelease];
                     [myself setView: view];
+                    printf("in loadView in AUv3_Wrapper.mm\r\n");
+                    //this area for viewport
+                    MessageManager::getInstance()->callAsync ([=]
+                    {
+                        //add code calling loadEditorWithViewport
+                        /*printf("test\r\n");
+                        loadEditor = new loadEditorWithViewport(editor);
+                        ourViewport = &loadEditor->theViewport;
+                        ourViewport->setSize(200, 300);
+    
+                        //set a position too
+                        ourItemHolder = &loadEditor->itemHolder;
+                        ourItemHolder->setSize(866, 571);
+                        ourItemHolder->setBounds(0, 0, 866, 571);
+                        ourItemHolder->addAndMakeVisible(editor);
+                        editor->setBounds(0, 0, 866, 571);
+                        ourViewport->setViewedComponent(ourItemHolder, true);
+                        ourViewport->addToDesktop (0, view);
+                        
+                         //have itemHolder add children */
+                        
+    #if JUCE_IOS
+                       editor->setVisible (false);
+    #else
+                       editor->setVisible (true);
+    #endif
+                       
+                       //so the view is what it is being added to so have to intercept this and maybe rewrite the addToDesktop function for a viewport
+                       //theViewport = new Viewport("UI");
+                       //theViewport->setSize(200, 300);
+                       //itemHolder = new Component();
+                       //itemHolder->setSize(860, 571);
+                       //itemHolder->addAndMakeVisible(editor);
+                       //itemHolder->addChildComponent(editor);
+                       //theViewport->setViewedComponent (itemHolder, true);
+                       //theViewport->addToDesktop (0, view); //this is part of component class so should be easy just need to instantiate the Viewport (from JUCE)
+                       editor->addToDesktop (0, view);
+    #if JUCE_IOS
+                       if (JUCE_IOS_MAC_VIEW* peerView = [[[myself view] subviews] objectAtIndex: 0])
+                           [peerView setContentMode: UIViewContentModeTop];
+                       
+                       if (auto* peer = dynamic_cast<UIViewPeerControllerReceiver*> (editor->getPeer()))
+                           peer->setViewController (myself);
+    #endif
+                   });
 
-                   #if JUCE_IOS
-                    editor->setVisible (false);
-                   #else
-                    editor->setVisible (true);
-                   #endif
-
-                    editor->addToDesktop (0, view);
-
-                   #if JUCE_IOS
-                    if (JUCE_IOS_MAC_VIEW* peerView = [[[myself view] subviews] objectAtIndex: 0])
-                        [peerView setContentMode: UIViewContentModeTop];
-
-                    if (auto* peer = dynamic_cast<UIViewPeerControllerReceiver*> (editor->getPeer()))
-                        peer->setViewController (myself);
-                   #endif
                 }
             }
         }

@@ -20,13 +20,29 @@
 #ifndef PLUGINEDITOR_H_INCLUDED
 #define PLUGINEDITOR_H_INCLUDED
 
+
+
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 #include "OperatorEditor.h"
 #include "GlobalEditor.h"
 #include "DXComponents.h"
 #include "DXLookNFeel.h"
+#ifndef CartManager_h
+#define CartManager_h
+
 #include "CartManager.h"
+#endif
+#ifndef ParamDialog_h
+#define ParamDialog_h
+#include "ParamDialog.h"
+#endif
+#ifndef PopupEditor_hpp
+#define PopupEditor_hpp
+
+#include "PopupEditor.hpp"
+
+#endif /* PopupEditor_hpp */
 
 //==============================================================================
 /**
@@ -36,18 +52,43 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
     OperatorEditor operators[6];
     Colour background;
     CartManager cartManager;
+    PopupEditor paramObj;
+    PopupEditor storeObj;
+    ParamDialog param;
+    int tp;
 
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
     
+    Viewport theViewport;
+    Component itemHolder;
+    Component attach;
+    
+    //Component topHolder;
+    //Component bottomHolder;
+    
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
-    void timerCallback();
-
-    void paint (Graphics& g);
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+    void timerCallback() override;
+    
+    /* george */
+    void hitParams();
+    void mouseMagnify (const MouseEvent &e, float magnifyAmount) override;
+    void mouseDown (const MouseEvent &event) override;
+    void mouseMove(const MouseEvent &event) override;
+    void mouseEnter(const MouseEvent &event) override;
+    void mouseExit(const MouseEvent &event) override;
+    void mouseDrag(const MouseEvent &event) override;
+    void mouseUp(const MouseEvent &event) override;
+    void mouseDoubleClick(const MouseEvent &event) override;
+    void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
+    void resized() override;
+    /* george */
+    
+    void paint (Graphics& g) override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void updateUI();
     void rebuildProgramCombobox();
     void loadCart(File file);

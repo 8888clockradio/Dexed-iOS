@@ -436,6 +436,8 @@ void ParamDialog::resized()
     atPitch->setBounds (528, 136, 56, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
+    //george
+    //printf("resized: ParamDialog.cpp\r\n");
 }
 
 void ParamDialog::sliderValueChanged (Slider* sliderThatWasMoved)

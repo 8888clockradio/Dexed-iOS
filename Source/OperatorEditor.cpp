@@ -316,6 +316,8 @@ void OperatorEditor::resized()
     //[UserResized] Add your own custom resize handling here..
     opSwitch->setBounds(226, 13, 64, 32);
     //[/UserResized]
+    //george
+    //printf("resized: ParamDialog.cpp\r\n");
 }
 
 void OperatorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
@@ -517,6 +519,66 @@ void OperatorEditor::updateEnvPos(char pos) {
     envDisplay->repaint();
 }
 
+/* george */
+
+void OperatorEditor::mouseMove(const MouseEvent &event) {
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseMove(event);
+    //printf("mouseMove: send to parent\r\n");
+    /* george */
+}
+void OperatorEditor::mouseEnter(const MouseEvent &event) {
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseEnter(event);
+    //printf("mouseEnter: send to parent\r\n");
+    /* george */
+}
+void OperatorEditor::mouseExit(const MouseEvent &event) {
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseExit(event);
+    //printf("mouseExit: send to parent\r\n");
+    /* george */
+}
+void OperatorEditor::mouseDrag(const MouseEvent &event) {
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseDrag(event);
+    //printf("mouseDrag: send to parent\r\n");
+    /* george */
+}
+void OperatorEditor::mouseUp(const MouseEvent &event) {
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseUp(event);
+    //printf("mouseUp: send to parent\r\n");
+    /* george */
+}
+void OperatorEditor::mouseDoubleClick(const MouseEvent &event) {
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseDoubleClick(event);
+    //printf("mouseDoubleClick: send to parent\r\n");
+    /* george */
+}
+void OperatorEditor::mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) {
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseWheelMove(event, wheel);
+    //printf("mouseWheelMove: send to parent\r\n");
+    /* george */
+}
+void OperatorEditor::mouseMagnify (const MouseEvent &event, float scaleFactor) {
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseMagnify(event, scaleFactor);
+    //printf("mouseMagnify: send to parent\r\n");
+    /* george */
+}
+/* george */
+
 void OperatorEditor::mouseDown(const MouseEvent &event) {
     if ( event.mods.isPopupMenu()) {
         PopupMenu popup;
@@ -546,6 +608,11 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
         }
 
     }
+    /* george */
+    auto theParent = getParentComponent();
+    theParent->mouseDown(event);
+    //printf("send to parent\r\n");
+    /* george */
 }
 
 //[/MiscUserCode]

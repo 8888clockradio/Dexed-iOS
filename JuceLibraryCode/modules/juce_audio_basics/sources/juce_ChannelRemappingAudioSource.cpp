@@ -118,6 +118,7 @@ void ChannelRemappingAudioSource::getNextAudioBlock (const AudioSourceChannelInf
                              remappedChan,
                              bufferToFill.startSample,
                              bufferToFill.numSamples);
+            //george note not this
         }
         else
         {

@@ -26,7 +26,6 @@
 
 #if JUCE_PLUGINHOST_VST3 && (JUCE_MAC || JUCE_WINDOWS)
 
-#include <map>
 #include "juce_VST3Headers.h"
 #include "juce_VST3Common.h"
 
@@ -67,8 +66,17 @@ static int warnOnFailure (int result) noexcept
     DBG (message);
     return result;
 }
+
+static int warnOnFailureIfImplemented (int result) noexcept
+{
+    if (result != kResultOk && result != kNotImplemented)
+        return warnOnFailure (result);
+
+    return result;
+}
 #else
  #define warnOnFailure(x) x
+ #define warnOnFailureIfImplemented(x) x
 #endif
 
 //==============================================================================
@@ -950,7 +958,7 @@ private:
         const File file (filePath);
         const char* const utf8 = file.getFullPathName().toRawUTF8();
 
-        if (CFURLRef url = CFURLCreateFromFileSystemRepresentation (0, (const UInt8*) utf8, (CFIndex) std::strlen (utf8), file.isDirectory()))
+        if (CFURLRef url = CFURLCreateFromFileSystemRepresentation (nullptr, (const UInt8*) utf8, (CFIndex) std::strlen (utf8), file.isDirectory()))
         {
             bundleRef = CFBundleCreate (kCFAllocatorDefault, url);
             CFRelease (url);
@@ -1132,7 +1140,7 @@ struct VST3PluginWindow : public AudioProcessorEditor,
         }
     }
 
-    ~VST3PluginWindow()
+    ~VST3PluginWindow() override
     {
         warnOnFailure (view->removed());
         warnOnFailure (view->setFrame (nullptr));
@@ -1599,6 +1607,7 @@ struct VST3ComponentHolder
 class VST3PluginInstance : public AudioPluginInstance
 {
 public:
+    //==============================================================================
     struct VST3Parameter final  : public Parameter
     {
         VST3Parameter (VST3PluginInstance& parent,
@@ -1610,20 +1619,24 @@ public:
         {
         }
 
-        virtual float getValue() const override
+        float getValue() const override
         {
             if (pluginInstance.editController != nullptr)
             {
+                const ScopedLock sl (pluginInstance.lock);
+
                 return (float) pluginInstance.editController->getParamNormalized (paramID);
             }
 
             return 0.0f;
         }
 
-        virtual void setValue (float newValue) override
+        void setValue (float newValue) override
         {
             if (pluginInstance.editController != nullptr)
             {
+                const ScopedLock sl (pluginInstance.lock);
+
                 pluginInstance.editController->setParamNormalized (paramID, (double) newValue);
 
                 Steinberg::int32 index;
@@ -1700,18 +1713,19 @@ public:
         const bool automatable;
     };
 
+    //==============================================================================
     VST3PluginInstance (VST3ComponentHolder* componentHolder)
         : AudioPluginInstance (getBusProperties (componentHolder->component)),
           holder (componentHolder),
           inputParameterChanges (new ParamValueQueueList()),
           outputParameterChanges (new ParamValueQueueList()),
-        midiInputs (new MidiEventList()),
-        midiOutputs (new MidiEventList())
+          midiInputs (new MidiEventList()),
+          midiOutputs (new MidiEventList())
     {
         holder->host->setPlugin (this);
     }
 
-    ~VST3PluginInstance()
+    ~VST3PluginInstance() override
     {
         jassert (getActiveEditor() == nullptr); // You must delete any editors before deleting the plugin instance!
 
@@ -1743,6 +1757,7 @@ public:
         editController = nullptr;
     }
 
+    //==============================================================================
     bool initialise()
     {
        #if JUCE_WINDOWS
@@ -1768,10 +1783,21 @@ public:
         editController->setComponentHandler (holder->host);
         grabInformationObjects();
         interconnectComponentAndController();
-        addParameters();
-        synchroniseStates();
-        syncProgramNames();
+
+        auto configureParameters = [this]
+        {
+            addParameters();
+            synchroniseStates();
+            syncProgramNames();
+        };
+        configureParameters();
+
         setupIO();
+
+        // Some plug-ins don't present their parameters until after the IO has been
+        // configured, so we need to jump though all these hoops again
+        if (getParameters().isEmpty() && editController->getParameterCount() > 0)
+            configureParameters();
 
         return true;
     }
@@ -1837,12 +1863,16 @@ public:
         holder->initialise();
         editController->setComponentHandler (holder->host);
 
-
         Array<Vst::SpeakerArrangement> inputArrangements, outputArrangements;
         processorLayoutsToArrangements (inputArrangements, outputArrangements);
 
-        warnOnFailure (processor->setBusArrangements (inputArrangements.getRawDataPointer(), inputArrangements.size(),
-                                                      outputArrangements.getRawDataPointer(), outputArrangements.size()));
+        // Some plug-ins will crash if you pass a nullptr to setBusArrangements!
+        SpeakerArrangement nullArrangement = {};
+        auto* inputArrangementData  = inputArrangements.isEmpty()  ? &nullArrangement : inputArrangements.getRawDataPointer();
+        auto* outputArrangementData = outputArrangements.isEmpty() ? &nullArrangement : outputArrangements.getRawDataPointer();
+
+        warnOnFailure (processor->setBusArrangements (inputArrangementData,  inputArrangements.size(),
+                                                      outputArrangementData, outputArrangements.size()));
 
         Array<Vst::SpeakerArrangement> actualInArr, actualOutArr;
         repopulateArrangements (actualInArr, actualOutArr);
@@ -1865,7 +1895,7 @@ public:
         cachedBusLayouts = getBusesLayout();
 
         warnOnFailure (holder->component->setActive (true));
-        warnOnFailure (processor->setProcessing (true));
+        warnOnFailureIfImplemented (processor->setProcessing (true));
 
         isActive = true;
     }
@@ -1880,7 +1910,7 @@ public:
         setStateForAllMidiBuses (false);
 
         if (processor != nullptr)
-            warnOnFailure (processor->setProcessing (false));
+            warnOnFailureIfImplemented (processor->setProcessing (false));
 
         if (holder->component != nullptr)
             warnOnFailure (holder->component->setActive (false));
@@ -2511,6 +2541,7 @@ private:
     Vst::ProcessContext timingInfo; //< Only use this in processBlock()!
     bool isControllerInitialised = false, isActive = false, lastProcessBlockCallWasBypass = false;
     VST3Parameter* bypassParam = nullptr;
+    CriticalSection lock;
 
     //==============================================================================
     /** Some plugins need to be "connected" to intercommunicate between their implemented classes */
@@ -2597,7 +2628,7 @@ private:
 
         if (holder->component->getState (&stream) == kResultTrue)
             if (stream.seek (0, Steinberg::IBStream::kIBSeekSet, nullptr) == kResultTrue)
-                warnOnFailure (editController->setComponentState (&stream));
+                warnOnFailureIfImplemented (editController->setComponentState (&stream));
     }
 
     void grabInformationObjects()
@@ -2788,6 +2819,7 @@ private:
 
         {
             int idx, num = editController->getParameterCount();
+
             for (idx = 0; idx < num; ++idx)
                 if (editController->getParameterInfo (idx, paramInfo) == kResultOk
                      && (paramInfo.flags & Steinberg::Vst::ParameterInfo::kIsProgramChange) != 0)
@@ -2834,8 +2866,7 @@ private:
             }
         }
 
-        if (editController != nullptr
-               && paramInfo.stepCount > 0)
+        if (editController != nullptr && paramInfo.stepCount > 0)
         {
             auto numPrograms = paramInfo.stepCount + 1;
 
